@@ -13,11 +13,12 @@ router.get("/api/notes", (req,res)=>
 });
 
 router.post("/api/notes", (req,res)=>{
-    const note = JSON.stringify(req.body);
-    console.log(note);
-    fs.appendFile("./db/db.json", note, (err, data)=>{
-        if(err) throw err;
-        res.send(data);
-    })
+    let notes = fs.readFileSync("./db/db.json", "utf8");
+    let newNote = JSON.parse(notes);
+    let note = req.body;
+    note.id = newNote.length + 1;
+    newNote.push(note);
+    fs.writeFileSync("./db/db.json", JSON.stringify(newNote, null, 2));
+    res.send({msg: "added"});
 });
 module.exports = router;
